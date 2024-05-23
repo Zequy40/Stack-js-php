@@ -1,0 +1,230 @@
+---
+
+---
+
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body>
+		<h1>Stack Js y Php</h1>
+
+		<section>
+			<fieldset class="cargar">
+				<legend>Cargar</legend>
+				<div class="listaCargar"></div>
+				
+			</fieldset>
+			<fieldset class="insertar">
+				<legend>Insertar</legend>
+				<label for="titulo">Titulo de classificación:</label>
+				<input type="text" id="titulo" placeholder="Titulo" autofocus> 
+				<label for="producto">Titulo de classificación:</label>
+				<input type="text" id="producto" placeholder="producto" > 
+				<div class="listainsertar"></div>
+				<button class="btinsertar">Insertar</button>
+			</fieldset>
+			<fieldset class="editar">
+				<legend>Editar</legend>
+				<label for="tituloEditar">Titulo de classificación:</label>
+				<input type="text" id="tituloEditar" placeholder="Titulo" autofocus> 
+				<label for="productoEditar">Titulo de classificación:</label>
+				<input type="text" id="productoEditar" placeholder="producto" > 
+				<div class="listaEditar"></div>
+				<button class="bteditar">Editar</button>
+			</fieldset>
+		</section>
+	</body>
+</html>
+
+
+              </fieldset>                   
+
+<style>
+	body{
+      font-family: 'Montserrat', sans-serif;
+  }
+ 
+  .listaEditar{
+      margin-top:8px;
+  }
+  .lineaAbierta,.linea{
+      font-size:1.2em;
+  }
+  .bloque img{
+      position:absolute;
+      right:4px;
+      bottom:5px;
+      width:22px;
+      cursor:pointer;
+  }
+  
+  .producto{
+      width:75px;
+  }
+  label{
+      display:block;
+      margin:10px 0 1px;
+  }
+  input{
+      font-family: 'Montserrat', sans-serif;
+      border-radius:6px;
+      padding:4px 8px 5px;
+      font-size:1.1em;
+      outline:none;
+      border:1px dotted black;
+  }
+  .listaCargar{
+      font-size:1.2em;
+  }
+  .bloque{
+      position:relative;
+      border:1px solid gray;
+      border-radius:5px;
+      padding:3px 10px 5px;
+      margin-bottom:10px;
+      cursor:pointer;
+  }
+  .listainsertar{
+      margin-top:8px;
+      width:100%;
+  }
+  button{
+      margin-top:20px;
+      padding:6px 14px;
+      background-color:cornflowerblue;
+      border-radius:5px;
+      outline:none;
+      color:white;
+      font-size:1.1em;
+      cursor:pointer;
+      border:none;
+      position:absolute;
+      bottom:10px;
+      right:10px;
+  }
+  button:hover{
+      background-color:royalblue;
+  }
+  section{
+      display:flex;
+  }
+  fieldset{
+      position:relative;
+      height:91vh;
+      border-radius:6px;
+      overflow:auto;
+  }
+  .cargar{
+      width:150px;
+  }
+  .insertar{
+      width:300px;
+      margin:0 8px;
+	 
+  }
+  .editar{
+      width:300px;
+	 
+  }
+  legend{
+      padding:0 8px;
+      font-size:1.1em;
+  }
+</style>
+
+<script>
+	let Datos = [];
+const listaCargar = document.querySelector('#producto');
+listaCargar.addEventListener('keydown', teclado);
+vaciar();
+document.querySelector('.btinsertar').addEventListener('click', insertar);
+
+function teclado(e){
+	if(e.key === 'Enter'){
+		leer();
+	}
+}
+
+function leer(){
+	const listaCargar = document.querySelector('#producto') as HTMLInputElement;
+	const ESCRITO = listaCargar.value.trim();
+	if(ESCRITO){
+		Datos.push({"el nombre":ESCRITO, "estrellas":1});
+		escribir(ESCRITO);
+		vaciar();
+	}
+}
+
+function escribir(valor){
+document.querySelector('.listainsertar').insertAdjacentHTML("beforeend",
+	`<div class="flex items-center" zeky="${Datos.length-1}">
+		<div class='w-32 text-sm'>${valor}</div>
+		<div class='flex'>
+			<img src="estrella.png" class='w-6 cursor-pointer' onclick="unaMas(this)" ></div>
+		</div>`
+);
+}
+
+function vaciar(){
+	const listaCargar = document.querySelector('#producto') as HTMLInputElement;
+	listaCargar.value='';
+	listaCargar.focus();
+}
+
+declare global {
+	interface Window {
+		unaMas: (e: HTMLElement) => void;
+	}
+}
+
+window.unaMas = function(e){
+	let padre = e.parentNode.querySelectorAll('img').length;
+	if(padre >= 5){
+		padre=0;
+		(e.parentNode as Element).innerHTML=`<img src="estrella.png" class='w-6 cursor-pointer' onclick="unaMas(this)" >`;
+	}
+	const id = (e.parentNode as Element).parentNode["getAttribute"]('zeky');
+	Datos[id].estrellas=++padre;
+	(e.parentNode as Element).insertAdjacentHTML("beforeend",`<img src="estrella.png" class='w-6 cursor-pointer' onclick="unaMas(this)" >`);
+}
+
+// function insertar(){
+// 	const listaCargar = document.querySelector('#titulo') as HTMLInputElement;
+	
+// 	const ESCRITO = listaCargar.value.trim();
+// 	console.log(ESCRITO);
+// 	console.log(Datos);
+// 	fetch('http://localhost:8888/stackjs/insertar.php',{
+// 		method:'POST',
+// 		headers:{
+// 			'Content-Type':'application/json'
+// 		},
+// 		body:JSON.stringify({titulo:ESCRITO, datos:Datos})
+// 	}).then(() => console.log("CARGANDO DATOS"))
+
+// }
+function insertar() {
+	const titulado = document.querySelector('#titulo')as HTMLInputElement
+	const titulo = titulado.value.trim();
+	const datos = Datos;  // Asegúrate de que 'Datos' es un array de objetos como se espera
+
+	console.log(titulo);
+	console.log(datos);
+
+	fetch('http://localhost:8888/stackjs/insertar.php', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ titulo: titulo, datos: datos })
+	})
+	.then(response => response.json())
+	.then(data => console.log('Response from server:', data))
+	.catch(error => console.error('Error:', error));
+}
+</script>
