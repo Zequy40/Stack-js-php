@@ -142,6 +142,7 @@
 const listaCargar = document.querySelector('#producto');
 listaCargar.addEventListener('keydown', teclado);
 vaciar();
+cargarTodos();
 document.querySelector('.btinsertar').addEventListener('click', insertar);
 
 function teclado(e){
@@ -192,27 +193,10 @@ window.unaMas = function(e){
 	Datos[id].estrellas=++padre;
 	(e.parentNode as Element).insertAdjacentHTML("beforeend",`<img src="estrella.png" class='w-6 cursor-pointer' onclick="unaMas(this)" >`);
 }
-
-// function insertar(){
-// 	const listaCargar = document.querySelector('#titulo') as HTMLInputElement;
-	
-// 	const ESCRITO = listaCargar.value.trim();
-// 	console.log(ESCRITO);
-// 	console.log(Datos);
-// 	fetch('http://localhost:8888/stackjs/insertar.php',{
-// 		method:'POST',
-// 		headers:{
-// 			'Content-Type':'application/json'
-// 		},
-// 		body:JSON.stringify({titulo:ESCRITO, datos:Datos})
-// 	}).then(() => console.log("CARGANDO DATOS"))
-
-// }
 function insertar() {
 	const titulado = document.querySelector('#titulo')as HTMLInputElement
 	const titulo = titulado.value.trim();
-	const datos = Datos;  // Asegúrate de que 'Datos' es un array de objetos como se espera
-
+	const datos = Datos;  
 	console.log(titulo);
 	console.log(datos);
 
@@ -226,5 +210,58 @@ function insertar() {
 	.then(response => response.json())
 	.then(data => console.log('Response from server:', data))
 	.catch(error => console.error('Error:', error));
+}
+function cargarTodos() {
+    fetch('http://localhost:8888/stackjs/cargarTodo.php')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data); 
+            cargarDatos(data);
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+function cargarDatos(registros) {
+    const listaCargar = document.querySelector('.listaCargar');
+    if (!Array.isArray(registros)) {
+        console.error('Invalid data: registros is not an array');
+        return;
+    }
+
+    registros.forEach(registro => {
+        if (typeof registro !== 'object' || !registro.title || !registro.dates) {
+            console.error('Invalid data structure:', registro);
+            return;
+        }
+
+        const bloque = document.createElement('div');
+        bloque.className = 'bloque';
+        bloque.innerHTML = `
+            <strong>${registro.title}</strong> (${Array.isArray(registro.dates) ? registro.dates.length : 0})
+            <img src="papelera.png" class="eliminar cursor-pointer w-5">
+        `;
+
+        // Asignar eventos
+        bloque.addEventListener('click', () => ver(bloque));
+        bloque.querySelector('.eliminar').addEventListener('click', (e) => {
+            e.stopPropagation(); // Para evitar que el evento de click en el bloque también se dispare
+            eliminar(bloque);
+        });
+
+        listaCargar.appendChild(bloque);
+    });
+}
+function ver(bloque) {
+    console.log(bloque);
+}
+function eliminar(bloque) {
+    
+    console.log(bloque);
 }
 </script>
