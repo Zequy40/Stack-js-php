@@ -239,16 +239,30 @@ function cargarDatos(registros) {
             console.error('Invalid data structure:', registro);
             return;
         }
+        
+        let datesArray;
+        try {
+            // Reemplazar las barras invertidas dobles \\\" con comillas dobles \"
+            const cleanedDates = registro.dates.replace(/\\"/g, '"');
+            datesArray = JSON.parse(cleanedDates);
+            if (!Array.isArray(datesArray)) {
+                console.error('Invalid dates structure:', registro.dates);
+                return;
+            }
+        } catch (e) {
+            console.error('Error parsing dates:', registro.dates);
+            return;
+        }
 
         const bloque = document.createElement('div');
         bloque.className = 'bloque';
-        bloque.innerHTML = `
-            <strong>${registro.title}</strong> (${Array.isArray(registro.dates) ? registro.dates.length : 0})
-            <img src="papelera.png" class="eliminar cursor-pointer w-5">
+        bloque.innerHTML = `<div class="flex"
+            <strong class="cursor-pointer">${registro.title}</strong> (${datesArray.length})
+            <img src="papelera.png" class="eliminar cursor-pointer w-7 object-cover"></div>  
         `;
 
         // Asignar eventos
-        bloque.addEventListener('click', () => ver(bloque));
+        bloque.addEventListener('click', () => ver(datesArray));
         bloque.querySelector('.eliminar').addEventListener('click', (e) => {
             e.stopPropagation(); // Para evitar que el evento de click en el bloque también se dispare
             eliminar(bloque);
@@ -257,8 +271,9 @@ function cargarDatos(registros) {
         listaCargar.appendChild(bloque);
     });
 }
-function ver(bloque) {
-    console.log(bloque);
+function ver(data) {
+    console.log(data);
+    console.log(data.length);
 }
 function eliminar(bloque) {
     
