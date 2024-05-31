@@ -144,7 +144,7 @@ listaCargar.addEventListener('keydown', teclado);
 vaciar();
 cargarTodos();
 document.querySelector('.btinsertar').addEventListener('click', insertar);
-
+let titulo;
 function teclado(e){
 	if(e.key === 'Enter'){
 		leer();
@@ -253,6 +253,7 @@ function cargarDatos(registros) {
             console.error('Error parsing dates:', registro.dates);
             return;
         }
+        titulo = registro;
 
         const bloque = document.createElement('div');
         bloque.className = 'bloque';
@@ -272,8 +273,13 @@ function cargarDatos(registros) {
     });
 }
 function ver(data) {
+    const listaInsertar = document.querySelector('.listainsertar');
+    let datesHtml = data.map(date => {
+        return `Nombre: ${date["el nombre"]}<br>Estrellas: ${date["estrellas"]}<br>`;
+    }).join('');
+    listaInsertar.innerHTML = `Titulo: ${titulo.title}<br>${datesHtml}`;
     console.log(data);
-    console.log(data.length);
+    console.log(data);
 }
 function eliminar(bloque) {
     
